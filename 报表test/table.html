@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table{border-collapse:collapse;width: 500px;}
+        td{border:1px solid #333;width: 50px;}
+    </style>
+</head>
+<body>
+<div id="root">
+            <Tabeltmeplate
+                    :cardtypetervice="cardTypeService"
+                    :benchmarkpriceservice="benchmarkPriceService"
+                    :teamy="teamy"
+                    :tablearr="tablearr"
+             ></Tabeltmeplate>
+</div>
+
+<script  src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+<script src="vue.js"></script>
+<script src="basicprice.js"></script>
+<script src="cardtype.js"></script>
+<script src="org.js"></script>
+<script  type="x-template" id="common">
+    <div>
+        <td class='nowrap'       v-if="indexprop === 0&& !vtotal"  v-for="list in benchmarkpriceservice">{{list.price/100}}</td>
+        <td class='nowrap'       v-show="indexprop===0 &&!vtotal" rowspan="2">总计</td>
+        <td class='nowrap'       v-if="indexprop === 1 &&!vtotal"  v-for="list in benchmarkpriceservice">{{team?(team.iValue*list.price/10000):(list.price/100)}}</td>
+        <td class="tdval card"   v-for="(list,pricei) in benchmarkpriceservice"   v-if="indexprop === 2" >
+            <div v-for="tdi in tablearr" v-if="team?tdi.cardType==team.iCardType:tdi.cardType=='other'">
+                    <span v-for="x in tdi">
+                        <a v-for="xi in x" v-if="xi.initialCost*100==list.price">{{xi.cardCount}}</a>
+                    </span>
+            </div>
+        </td>
+        <td  v-if="indexprop===2" class="totalnum card"></td>
+        <td class='tdval cost' v-if="indexprop === 3"  v-for="list in benchmarkpriceservice" >
+            <div v-for="tdi in tablearr" v-if="team?tdi.cardType==team.iCardType:tdi.cardType=='other'">
+                    <span v-for="x in tdi">
+                        <a v-for="xi in x" v-if="xi.initialCost*100==list.price">{{xi.costCount}}</a>
+                    </span>
+            </div>
+        </td>
+        <td v-if="indexprop===3" class="totalnum cost"></td>
+    </div>
+</script>
+<script  type="x-template" id="localtmp">
+    <div>
+        <tr v-for="(y,index) in teamy" class="locallist">
+            <td rowspan="4" v-if="index==0">{{team.cCardName}}</td>
+            <td>{{y}}</td>
+            <commontmp
+                    :cardtypetervice="cardtypetervice"
+                    :benchmarkpriceservice="benchmarkpriceservice"
+                    :teamy="teamy"
+                    :tablearr="tablearr"
+                    :indexprop="index"
+                    :team="team"
+                    :vtotal=false
+            ></commontmp>
+        </tr>
+    </div>
+</script>
+<script  type="x-template" id="othertmp">
+  <div >
+      <tr v-for="(y,index) in teamy" class="otherlist">
+          <td>{{y}}</td>
+          <commontmp
+            :cardtypetervice="cardtypetervice"
+            :benchmarkpriceservice="benchmarkpriceservice"
+            :teamy="teamy"
+            :tablearr="tablearr"
+            :indexprop="index"
+            :vtotal=false
+
+          ></commontmp>
+      </tr>
+  </div>
+</script>
+<script type="x-template" id="table">
+        <table>
+            <caption>柳河机构汇总表</caption>
+            <tbody>
+                <tr id="local"><td>本地卡</td></tr>
+                    <local
+                            v-for="(team,i) in cardtypetervice"
+                            :team="team"
+                            :cardtypetervice="cardtypetervice"
+                            :benchmarkpriceservice="benchmarkpriceservice"
+                            :teamy="teamy"
+                            :tablearr="tablearr"
+                            :key="i">
+                    </local>
+
+                <tr>
+                    <td id="other" rowspan="5" colspan="2">异地卡</td>
+                </tr>
+                <tr is="othertmp"
+                    :cardtypetervice="cardtypetervice"
+                    :benchmarkpriceservice="benchmarkpriceservice"
+                    :teamy="teamy"
+                    :tablearr="tablearr">
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2" rowspan="3">总计</td>
+                </tr>
+                <tr v-for="(y,index) in teamy" class="totallist"   v-if="index==2||index==3">
+                    <td rowspan="4" v-if="index==0">{{team.cCardName}}</td>
+                    <td>{{y}}</td>
+                    <commontmp
+                            :cardtypetervice="cardtypetervice"
+                            :benchmarkpriceservice="benchmarkpriceservice"
+                            :teamy="teamy"
+                            :tablearr="tablearr"
+                            :indexprop="index"
+                            :vtotal=true
+                    ></commontmp>
+                </tr>
+
+            </tfoot>
+        </table>
+
+</script>
+<script>
+    var commontmp={
+        template:"#common",
+        props:['cardtypetervice','benchmarkpriceservice','teamy','team','tablearr','indexprop','vtotal']
+    }
+     var local={
+        template:'#localtmp',
+         components:{
+             'commontmp':commontmp
+         },
+        props:['cardtypetervice','benchmarkpriceservice','teamy','team','tablearr']
+    };
+     var othertmp={
+         template:"#othertmp",
+         components:{
+             'commontmp':commontmp
+         },
+         props:['cardtypetervice','benchmarkpriceservice','teamy','team','tablearr']
+     };
+
+
+     var Tabeltmeplate={
+         template:'#table',
+         props:['cardtypetervice','benchmarkpriceservice','teamy','tablearr'],
+         components:{
+             'local':local,
+             'othertmp':othertmp,
+             'commontmp':commontmp
+         }
+     }
+    new Vue({
+        el:"#root",
+         components:{
+             'Tabeltmeplate':Tabeltmeplate
+         },
+        data:{
+            beginAd:'2018-01-01',
+            endAd:'2018-12-31',
+            benchmarkPriceService:price.obj,
+            cardTypeService:cardtype.obj,
+            teamy:['基准价','单价','笔数','金额'],
+            tablearr:org.obj[0].cardList,
+            htmlarr:[],
+            totalval:[],
+            costname:[],
+            cardname:[]
+
+
+        },
+        beforeMount:function () {
+            var that=this;
+            var htmlarr=[];
+            var totalval=[];
+            var costname=[];
+            var cardname=[];
+            $.each(that.benchmarkPriceService,function (i) {
+                costname.push('tdval card'+i)
+            })
+            that.costname=costname;
+            console.log(costname);
+//            $.each(that.cardTypeService,function(i,item){
+//              htmlarr.push({td:item.cCardName,rowspan:5});
+//                  $.each(that.teamy,function(pi,price){
+//                    var arr=[];
+//                    arr.push(price);
+//                    $.each(that.benchmarkPriceService,function(b,basicprice){
+//                         if(pi===0){
+//                            arr.push(basicprice.price/100)
+//                        }
+//                        else{
+//                               var arr2=[0];
+//
+//                                $.each(that.tablearr,function(di,datalist){
+//
+//                                    if(datalist.cardType==item.iCardType){
+//                                       $.each(datalist.costList,function(tdi,tdc){
+//                                            if(tdc.initialCost==basicprice.price/100){
+//                                                if(price=='笔数'){
+//
+//                                                    arr2[b]=tdc.cardCount;
+//
+//                                                }
+//                                                else  if(price=='金额'){
+//                                                    arr2[b]=tdc.costCount;
+//                                                }
+//                                            }
+//
+//                                       })
+//                                    }
+//                                })
+//
+//                                 arr=arr.concat(arr2)
+//
+//                            }
+//                    })
+//                   htmlarr.push({td:arr});
+//                  })
+//            })
+//            that.htmlarr=htmlarr;
+
+
+//            axios.post('/transit/cardTypeService/list')
+//                .then(function (response) {
+//                    that.cardTypeService=response.data.obj;
+//                    console.log(that.cardTypeService)
+//                })
+//                .catch(function (error) {
+//                });
+//            axios.post('/transit/benchmarkPriceService/list',{"isShow":1})
+//                .then(function (response) {
+//                    that.benchmarkPriceService=response.data.obj;
+//                })
+//                .catch(function (error) {
+//                });
+
+        },
+        mounted:function () {
+            $("tr").unwrap('div');
+            $(".nowrap").unwrap('div');
+            var cost=[0,0,0,0,0];
+            var card=[0,0,0,0,0];
+            $("tr:not('.totallist')").each(function () {
+                var arr=[];
+
+                $(this).find("td").each(function () {
+                    var tdtext=$(this).find("a").html();
+                    var csname=$(this).prop('class');
+                    if(tdtext){
+                        arr.push(tdtext) //横向统计
+                    }else{
+                      if(csname.indexOf('tdval')>-1){//笔数金额没有值为0；
+                          $(this).html(0)
+                      }
+                    }
+
+                })
+                var totalval=0;
+                $.each(arr,function (i,item) {
+                    totalval+=Number(item);
+                });
+                $(this).find(".totalnum").html(totalval);
+                $(this).find('.cost:visible').each(function (i,item) {
+                    var val=$(this).text();
+                        cost[i]+=Number(val);
+                })
+                $(this).find('.card:visible').each(function (i,item) {
+                    var val=$(this).text();
+                    card[i]+=Number(val);
+                })
+
+
+            })
+            $('.totallist .card').each(function (i,item) {
+                $(item).html(card[i])
+            })
+            $('.totallist .cost').each(function (i,item) {
+                $(item).html(cost[i])
+            })
+            $("#local td").prop('rowspan',$(".locallist").length+1)
+
+        }
+    })
+</script>
+</body>
+</html>

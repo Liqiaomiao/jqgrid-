@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jqgrid_demo</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+            <nav class="navbar navbar-default  navbar-fixed-top">
+                <ul class="nav nav-pills" >
+                    <li role="presentati on"><a href="https://blog.csdn.net/wd4java/article/details/53991908" target="_blank">合并单元格参考网址</a></li>
+                    <li role="presentati on"><a href="机构汇总表.html" target="_blank">机构汇总表</a></li>
+                    <li role="presentation"><a href="car-report.html" target="_blank">车辆汇总表</a></li>
+                </ul>
+            </nav>
+        <div  class=" mt20">
+           <table class="table table-bordered">
+               <caption>jqgrid初始化常用参数</caption>
+               <tr>
+                   <th>名称</th>
+                   <th>	类型</th>
+                   <th>说明</th>
+               </tr>
+               <tr>
+                   <td>url</td>
+                   <td>	string</td>
+                   <td>获取数据的地址 datatype为'local'可省略</td>
+               </tr>
+
+               <tr>
+                   <td>datatype</td>
+                   <td>string</td>
+                   <td>从服务器端返回的数据类型：目前项目中使用'local'和'json',
+                       <p>
+                           <b>'local':</b>本地数据；
+                       </p>
+                       <p>
+                           <b>'json':</b>需要结合url使用。
+                           否则会自动发送请求，默认当前页面地址 eg:（
+                           http://127.0.0.1:8080/car-report.html?_search=false&nd=1523239303170&rows=100&page=1&sidx=&sord=asc）
+
+                       </p>
+                   </td>
+               </tr>
+               <tr>
+                   <td>data</td>
+                   <td>array</td>
+                   <td>当datatype为local需要设置
+                       <div class="bs-callout bs-callout-danger">
+                           当制作合并单元格的情况时，合并项每项都要有数据（为相同数据，如示例中的positiontype:'本地卡'）
+                       </div>
+                        <div class="bs-callout-success bs-callout">
+                            <pre>
+data:[
+{
+    positiontype:'本地卡',cardType:'用户',rowy:'基准价',price1:'1',price2:'2',price3:'3',total:'合计'
+},
+{
+    positiontype:'本地卡',cardType:'用户',rowy:'单价',price1:'1',price2:'2',price3:'3',total:'合计'
+}]
+            </pre>
+                        </div>
+                   </td>
+               </tr>
+               <tr>
+                   <td>colNames</td>
+                   <td>array</td>
+                   <td>列名称 eg：
+                       <div class="bs-callout bs-callout-danger">注：colNames 和colModel 的长度一致</div>
+                       <div class='bs-callout bs-callout-success'>
+                        colNames:['车牌号','交易笔数','交易金额','打折金额']
+                        </div>
+                   </td>
+               </tr>
+               <tr>
+                   <td>colModel</td>
+                   <td>array</td>
+                   <td><b>name:</b> 单元格显示的内容；index 传到服务器端用来排序用的列名称；width 列宽度；align 对齐方式；<b>sortable</b> 是否可以排序(默认可排序)
+                        <b>formatter</b> :格式化
+                        <div class="bs-callout bs-callout-success">
+                            colModel:[{name: "cardNo",sortable:false},{name: "cost0",sortable:false}]
+                        </div>
+                   </td>
+               </tr>
+               <tr>
+                   <td>formatter</td>
+                   <td>function</td>
+                   <td>对列进行格式化时设置的函数名或者类型eg:
+                       <div class="bs-callout bs-callout-danger">
+                           注:该匿名函数需要有返回值 return 'xxxx'
+                       </div>
+                        <div class="bs-callout bs-callout-success">
+                            <pre>
+colModel:[
+  {
+    name: sexes, //对应每行数据的属性；
+    index: sexes,
+    formatter: function (cellvalue, options, rowObject) {
+             /*
+               cellvalue:当前单元格的值
+               options  :当前当前单元格的配置的属性
+               rowObject:当前所在行的所有属性及其值(取值判断)
+
+             */
+            switch (cellvalue) {
+                case 1:
+                    return '男';
+                    break;
+                case 0:
+                    return '女';
+                    break;
+                case undefined:
+                    return '无';
+                    break;
+            }
+     }
+  }
+]
+                            </pre>
+
+                        </div>
+                   </td>
+               </tr>
+               <tr>
+                   <td>cellattr</td>
+                   <td>function</td>
+                   <td>为单元格（td）添加属性(attributes:id,style,colspan,class....)
+                        <p>
+                            cellattr: function(index, cellvalue,rowoptions, celloptions, rowdata) {}
+                        </p>
+                        <div class="bs-callout bs-callout-success">
+                            <pre>
+cellattr: function(rowId, tv, rawObject, cm, rdata) {
+                //合并单元格
+                if (tv== '异地卡') {
+                    return ' colspan=2  rowspan=4'
+                }else if(tv== '合计'){
+                    return ' colspan=2  rowspan=4'
+                }else {
+                    return 'id=\'positiontype' + rowId + "\'";
+}}
+                            </pre>
+                        </div>
+                   </td>
+               </tr>
+               <tr>
+                   <td>setGroupHeaders</td>
+                   <td>jqgrid提供的方法：用于合并表头</td>
+                   <td>
+                        <div class="bs-callout bs-callout-success">
+                            <pre>
+ jQuery("#list").jqGrid('setGroupHeaders', {
+        useColSpanStyle: true,//是否为不合并项目增加rowspan属性
+        groupHeaders:[
+            {
+                numberOfColumns:3,//合并单元格数量
+                startColumnName:"cost0",//被合并的单元格的起始位置
+                titleText:"普通卡"//合并后的名称
+            }
+        ]
+ });
+                            </pre>
+                        </div>
+                   </td>
+               </tr>
+               <tr>
+                   <td>caption</td>
+                   <td>string</td>
+                   <td>表格名称eg:
+                    <div class="bs-callout bs-callout-success">
+                        caption: '柳河机构汇总表'
+                    </div>
+                   </td>
+               </tr>
+                <tr>
+                    <td>gridComplete</td>
+                    <td>function</td>
+                    <td>表格实例化回调
+                        <p>表格样式控制等操作</p>
+                        <div class="bs-callout bs-callout-success">
+                            <pre>
+gridComplete: function() {
+
+    var gridName = "list";
+    /*
+      @Merger    竖向合并单元格        arg1:表格id值,   arg2:被合并的属性
+    */
+    Merger(gridName, 'positiontype');
+
+}
+                            </pre>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>loadComplete</td>
+                    <td>function</td>
+                    <td>
+                        表格形成后的回调
+                        <p>
+                            表格内按钮操作等
+                        </p>
+                        <div class="bs-callout bs-callout-success">
+                            <pre>
+loadComplete: function(data) {
+     console.log(data)
+    $(selector).click(function(){//do something})
+}
+                            </pre>
+                        </div>
+
+                    </td>
+                </tr>
+               <tr>
+                   <td>mtype</td>
+                   <td>string</td>
+                   <td>'post'|'get'默认get
+                    <div class="bs-callout bs-callout-success">
+                        mtype: "post"
+                    </div>
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                        jsonReader <br>（读取）
+                   </td>
+                   <td>
+                       object
+                   </td>
+                   <td>
+                       读取数据对应的属性
+                       <p>通常有默认值，用于配合服务器返回的数据属性</p>
+
+                       <div class="bs-callout bs-callout-success">
+                           需要的数据格式
+                           <img src="./images/jsonreader.png" alt="">
+                           <pre>
+ jsonReader : {
+     root: "rows", //root这里的值是rows，意味着它会读取json中的rows键的值，这个值就是真实的数据
+     page: "page", //page这里的值是page，意味着它会读取json中的page键的值，当前页号
+     total: "total",//总的页数
+     records: "records",//总记录数
+     repeatitems: false,//如果设为false，则jqGrid在解析json时，会根据name来搜索对应的数据元素（即可以json中元素可以不按顺序）；而所使用的name是来自于colModel中的name设定。
+     cell: "cell",
+     id: "id",
+     userdata: "userdata",
+     subgrid: {root:"rows",
+        repeatitems: true,
+       cell:"cell"
+     }
+   }
+                           </pre>
+                       </div>
+                       <div class="bs-callout bs-callout-success">
+                               根据返回的数据所做的更改
+                            <img src="./images/jsonreader1.png" alt="">
+                            <pre>
+jsonReader: {
+    root: function (root) {//所有数据
+        if (root.obj.result) {
+            return root.obj.result
+        } else {
+            return root.obj
+        }
+    },
+    page: function (root) {//请求的页码
+        return root.obj.pageNo
+    },
+    records: function (root) {//总记录数
+        return root.obj.totalCount
+    },
+    total: function (root) {//总页数
+        return Math.ceil(root.obj.totalCount / root.obj.pageSize)
+    }
+}
+                               </pre>
+                           </div>
+
+                   </td>
+
+               </tr>
+               <tr>
+                   <td>prmNames <br>(发送)</td>
+                   <td>obj</td>
+                   <td>
+                       用于设置jqGrid将要向Server传递的参数名称
+                       当参数值为null时不会被发到服务器端
+                       <div class="bs-callout bs-callout-success">
+                           默认
+                           <img src="./images/prejson.png" alt="">
+                           <br>
+                           需要
+                           <img src="./images/prejson2.png" alt="">
+                           <pre>
+
+prmNames: {
+     page: 'pageNo',//页码
+     rows: 'pageSize',//请求行数
+     order: null,
+     search: null,
+     nd: null,
+     npage: null,
+     _search: null,
+     sidx: null,
+     sort: null
+ },
+                           </pre>
+                       </div>
+                   </td>
+               </tr>
+               <tr>
+                   <td>rowNum</td>
+                   <td>number</td>
+                   <td>每页显示条数</td>
+               </tr>
+               <tr>
+                   <td>rowList</td>
+                   <td>array</td>
+                   <td>
+                       可供选择的显示条目数
+                       <div class="bs-callout bs-callout-success">
+                           rowList: [10, 20, 30],
+                       </div>
+                   </td>
+               </tr>
+               <tr>
+                   <td>pager</td>
+                   <td>string</td>
+                   <td>
+                       定义翻页用的导航栏，必须是有效的html元素
+                       <div class="bs-callout bs-callout-success">
+                           <pre>
+//结构
+&lt;table id="list"&gt;&lt;/table&gt;
+&lt;div id="pager"&gt;&lt;/div&gt;
+
+//调用
+$("#list").jqGrid({
+ pager: '#pager'
+ ...
+})
+
+                           </pre>
+
+                       </div>
+                   </td>
+               </tr>
+               <tr>
+                   <td>viewrecords</td>
+                   <td>boolean</td>
+                   <td>是否显示总条目数（数据总数量）</td>
+
+               </tr>
+               <tr>
+                   <td>recordpos</td>
+                   <td>string</td>
+                   <td>
+                       是否显示总条目数（数据总数量）显示的位置"left" || 'right' || 'center'
+                    <p>默认：right</p>
+                   </td>
+               </tr>
+               <tr>
+                   <td></td>
+               </tr>
+               <tr>
+                   <td>onPaging</td>
+                   <td>function</td>
+                   <td>
+                       分页操作的回调函数
+                       <div class="bs-callout bs-callout-success">
+                           function (pgButton) {}
+                       </div>
+                   </td>
+               </tr>
+           </table>
+        </div>
+
+    </div>
+
+
+</div>
+</body>
+</html>

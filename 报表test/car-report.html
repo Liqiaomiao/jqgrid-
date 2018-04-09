@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/ui.jqgrid.css">
+    <script  src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="js/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.min.js"> </script>
+    <script src="data/basicprice.js"></script>
+    <script src="data/cardtype2.js"></script>
+    <script src="data/busTotal.js"></script>
+    <style>
+
+        body,html{width: 100%;height:100%;margin:0;padding:0;}
+        /*body>div{width: 98%!important;height:100%!important;table-layout: fixed;}*/
+        .ui-jqgrid-view{width: 80%!important;height:100%!important;}
+        table{border-collapse: collapse;}
+        .ui-jqgrid .ui-jqgrid-titlebar{text-align: center}
+        .ui-jqgrid .ui-jqgrid-title{float: none  ;}
+        .ui-jqgrid tr.ui-row-ltr td,.ui-jqgrid .ui-jqgrid-htable th{border: 1px solid ;}
+        .container{padding-left: 10px;width:98%;overflow-x: auto;}
+    </style>
+</head>
+<body>
+<div class="container">
+    <table id="list">
+    </table>
+</div>
+<div id="pager">
+</div>
+
+<script>
+    $(document).ready(function() {
+        var tablearr=[
+                //{cardNo:'津Z00001',cost1:14,card1:22.90,discount1:2.10,cost2:14,card2:	22.90,discount2:2.10,cost3:14,card3:22.90,discount3:2.10,cost4:14,card4:22.90,discount4:2.10}
+            ];
+        var cartypes=cardtype.obj;
+        var colname=['车牌号'];
+        var groups=['交易笔数','交易金额','打折金额'];
+        var tabledata=bustotal.obj;
+        var groupHeaders=[];
+        var colmodel=[{name:"cardNo"}];
+        var totalnum=cartypes.length;
+        $.each(cartypes,function (i,item) {
+            var matchname=item.cCardName;
+            //生成表头
+            $.each(groups,function (x,xitem) {
+                colname.push(xitem)
+            })
+            //生成合并格式；
+            var obj={};
+            obj.startColumnName='cost'+i;
+            obj.numberOfColumns=groups.length;
+            obj.titleText=matchname;
+            groupHeaders.push(obj);
+            //生成数据格式；
+            colmodel.push({sortable:false,name:'cost'+i});
+            colmodel.push({sortable:false,name:'card'+i});
+            colmodel.push({sortable:false,name:'discount'+i});
+        });
+        groupHeaders.push({startColumnName:'cost'+totalnum,numberOfColumns:3,titleText:'合计'});
+        colmodel.push({sortable:false,name:'cost'+totalnum});
+        colmodel.push({sortable:false,name:'card'+totalnum});
+        colmodel.push({sortable:false,name:'discount'+totalnum});
+        console.log('表头',groupHeaders)
+        $.each(tabledata.dataList,function (i,item) {
+            var obj={};
+//            obj.cardNo=item[0];
+            for(key in item){
+                obj.cardNo=key;
+                $.each(cartypes,function (type,typelist) {
+                    var carname=typelist.cCardName;
+                    var rowdata=item[key];//每行数据；
+                    for(rowkey in rowdata){
+
+                       if(rowkey.indexOf(carname)>-1){//匹配卡类型
+                            if(rowkey.indexOf('交易笔数')>-1){
+                                obj['cost'+type]=parseInt(rowdata[rowkey]);
+                            }
+                           if(rowkey.indexOf('交易金额')>-1){
+                               obj['card'+type]=parseFloat(rowdata[rowkey]).toFixed(2);
+
+                           }
+                           if(rowkey.indexOf('打折金额')>-1){
+                               obj['discount'+type]=parseFloat(rowdata[rowkey]).toFixed(2);
+                           }
+
+                       }
+                       if(rowkey.indexOf('合计')>-1){
+                           if(rowkey.indexOf('交易笔数')>-1){
+                               obj['cost'+totalnum]=parseInt(rowdata[rowkey]);
+                           }
+                           if(rowkey.indexOf('交易金额')>-1){
+                               obj['card'+totalnum]=parseFloat(rowdata[rowkey]).toFixed(2);
+
+                           }
+                           if(rowkey.indexOf('打折金额')>-1){
+                               obj['discount'+totalnum]=parseFloat(rowdata[rowkey]).toFixed(2);
+                           }
+                       }
+
+                    }
+                })
+            }
+
+            tablearr.push(obj);
+
+
+        })
+        $.each(tabledata.totalList,function (i,item) {
+            var obj={};
+//            obj.cardNo=item[0];
+            for(key in item){
+                obj.cardNo=key;
+                $.each(cartypes,function (type,typelist) {
+                    var carname=typelist.cCardName;
+                    var rowdata=item[key];//每行数据；
+                    for(rowkey in rowdata){
+
+                        if(rowkey.indexOf(carname)>-1){//匹配卡类型
+                            if(rowkey.indexOf('交易笔数')>-1){
+                                obj['cost'+type]=parseInt(rowdata[rowkey]);
+                            }
+                            if(rowkey.indexOf('交易金额')>-1){
+                                obj['card'+type]=parseFloat(rowdata[rowkey]).toFixed(2);
+
+                            }
+                            if(rowkey.indexOf('打折金额')>-1){
+                                obj['discount'+type]=parseFloat(rowdata[rowkey]).toFixed(2);
+                            }
+
+                        }
+                        if(rowkey.indexOf('合计')>-1){
+                            if(rowkey.indexOf('交易笔数')>-1){
+                                obj['cost'+totalnum]=parseInt(rowdata[rowkey]);
+                            }
+                            if(rowkey.indexOf('交易金额')>-1){
+                                obj['card'+totalnum]=parseFloat(rowdata[rowkey]).toFixed(2);
+
+                            }
+                            if(rowkey.indexOf('打折金额')>-1){
+                                obj['discount'+totalnum]=parseFloat(rowdata[rowkey]).toFixed(2);
+                            }
+                        }
+
+                    }
+                })
+            }
+
+            tablearr.push(obj);
+
+
+        })
+        colname=colname.concat(groups);
+        console.log(colname,colmodel,tablearr)
+        grid = $("#list");
+        grid.jqGrid({
+            datatype: 'local',
+            data: tablearr,
+            colNames:colname,
+            colModel:colmodel,
+            rowNum: 100,
+            rowList: [10, 15, 20, 30],
+           // pager: '#pager',
+            gridview: true,
+            rownumbers: false,
+            sortable:false,
+//            sortname: 'invdate',
+            viewrecords: true,
+//            sortorder: 'desc',
+            caption: '柳河机构汇总表',
+            height: '100%',
+            gridComplete: function(a,b,c) {
+                //②在gridComplete调用合并方法
+                var gridName = "list";
+                //表头合并
+                jQuery("#list").jqGrid('setGroupHeaders', {
+                    useColSpanStyle: true,
+                    groupHeaders:groupHeaders
+                });
+
+            }
+
+        });
+        //公共调用方法（合并单元格）
+        function Merger(gridName, CellName) {
+            //得到显示到界面的id集合
+            var mya = $("#" + gridName + "").getDataIDs();
+
+            //当前显示多少条
+            var length = mya.length;
+            for (var i = 0; i < length; i++) {
+                //从上到下获取一条信息
+                var before = $("#" + gridName + "").jqGrid('getRowData', mya[i]);
+                //定义合并行数
+                var rowSpanTaxCount = 1;
+                for (j = i + 1; j <= length; j++) {
+                    //和上边的信息对比 如果值一样就合并行数+1 然后设置rowspan 让当前单元格隐藏
+                    var end = $("#" + gridName + "").jqGrid('getRowData', mya[j]);
+                    if (before[CellName] == end[CellName]) {
+                        rowSpanTaxCount++;
+                        $("#" + gridName + "").setCell(mya[j], CellName, '', { display: 'none' });
+                    } else {
+                        rowSpanTaxCount = 1;
+                        break;
+                    }
+                    $("#" + CellName + "" + mya[i] + "").attr("rowspan", rowSpanTaxCount);
+                }
+            }
+        }
+    });
+
+
+
+
+</script>
+
+</body>
+
+</html>
