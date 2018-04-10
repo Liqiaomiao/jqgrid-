@@ -7,28 +7,35 @@
     <script  src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="js/jqGrid/i18n/grid.locale-en.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.min.js"> </script>
+    <link rel="stylesheet" href="./css/redmond/jquery-ui-1.8.16.custom.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="./css/index.css">
     <script src="data/basicprice.js"></script>
     <script src="data/cardtype2.js"></script>
     <script src="data/busTotal.js"></script>
-    <style>
-
-        body,html{width: 100%;height:100%;margin:0;padding:0;}
-        /*body>div{width: 98%!important;height:100%!important;table-layout: fixed;}*/
-        .ui-jqgrid-view{width: 80%!important;height:100%!important;}
-        table{border-collapse: collapse;}
-        .ui-jqgrid .ui-jqgrid-titlebar{text-align: center}
-        .ui-jqgrid .ui-jqgrid-title{float: none  ;}
-        .ui-jqgrid tr.ui-row-ltr td,.ui-jqgrid .ui-jqgrid-htable th{border: 1px solid ;}
-        .container{padding-left: 10px;width:98%;overflow-x: auto;}
-    </style>
 </head>
 <body>
 <div class="container">
+    <h4>制作步骤
+    </h4>
+    <img src="./images/tbdata.png" alt="">
+    <div class="bs-callout bs-callout-text">
+        <ol>
+            <li>合成表头</li>
+            <li>生成表头合并方式</li>
+            <li>合成每列参数（colmodel）</li>
+            <li>合成数据(匹配卡类型和['交易笔数','交易金额','打折金额'])</li>
+        </ol>
+    </div>
+
     <table id="list">
     </table>
+    <div id="pager">
+    </div>
 </div>
-<div id="pager">
-</div>
+
+
+
 
 <script>
     $(document).ready(function() {
@@ -40,7 +47,7 @@
         var groups=['交易笔数','交易金额','打折金额'];
         var tabledata=bustotal.obj;
         var groupHeaders=[];
-        var colmodel=[{name:"cardNo"}];
+        var colmodel=[{name:"cardNo",sortable:false}];
         var totalnum=cartypes.length;
         $.each(cartypes,function (i,item) {
             var matchname=item.cCardName;
@@ -103,10 +110,7 @@
                     }
                 })
             }
-
             tablearr.push(obj);
-
-
         })
         $.each(tabledata.totalList,function (i,item) {
             var obj={};
@@ -153,9 +157,11 @@
 
         })
         colname=colname.concat(groups);
-        console.log(colname,colmodel,tablearr)
+
+        console.log(colmodel)
         grid = $("#list");
         grid.jqGrid({
+            width:'1200',
             datatype: 'local',
             data: tablearr,
             colNames:colname,
@@ -169,7 +175,7 @@
 //            sortname: 'invdate',
             viewrecords: true,
 //            sortorder: 'desc',
-            caption: '柳河机构汇总表',
+            caption: '报表',
             height: '100%',
             gridComplete: function(a,b,c) {
                 //②在gridComplete调用合并方法
@@ -183,6 +189,8 @@
             }
 
         });
+
+
         //公共调用方法（合并单元格）
         function Merger(gridName, CellName) {
             //得到显示到界面的id集合

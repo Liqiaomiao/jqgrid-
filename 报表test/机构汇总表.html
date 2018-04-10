@@ -7,142 +7,171 @@
     <script  src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="js/jqGrid/i18n/grid.locale-en.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.min.js"> </script>
-    <script src="js/jqGrid/jquery.jqGrid.min.js"></script>
+    <link rel="stylesheet" href="./css/redmond/jquery-ui-1.8.16.custom.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="css/index.css">
     <script src="data/basicprice.js"></script>
     <script src="data/cardtype.js"></script>
     <script src="data/org.js"></script>
     <style>
-        body,html{width: 100%;height:100%;margin:0;padding:0;}
-        body>div{width: 98%!important;height:100%!important;table-layout: fixed;}
-        .ui-jqgrid-view{width: 80%!important;height:100%!important;}
-        table{border-collapse: collapse;}
-        .ui-jqgrid .ui-jqgrid-titlebar{text-align: center}
-        .ui-jqgrid .ui-jqgrid-title{float: none  ;}
-        .ui-jqgrid tr.ui-row-ltr td{border: 1px solid ;}
+        /*body,html{width: 100%;height:100%;margin:0;padding:0;}*/
+        /*body>div{width: 98%!important;height:100%!important;table-layout: fixed;}*/
+        /*.ui-jqgrid-view{height:100%!important;}*/
+        /*table{border-collapse: collapse;}*/
+        /*.ui-jqgrid .ui-jqgrid-titlebar{text-align: center}*/
+        /*.ui-jqgrid .ui-jqgrid-title{float: none  ;}*/
+        /*.ui-jqgrid tr.ui-row-ltr td{border: 1px solid ;}*/
         .ui-jqgrid-labels.jqg-third-row-header{display: none  }
     </style>
 </head>
 <body>
-<table id="list">
-</table>
-<div id="pager">
-</div>
 
-<script>
-    $(document).ready(function() {
-            //最终需要的数据格式，做参考用
-        var mydata=[
+<div class="container">
+    <h4>制作步骤</h4>
+    <div class="bs-callout bs-callout-success">
+        <ol>
+            <li>参照合并的 <a href="https://blog.csdn.net/wd4java/article/details/53991908" target="_blank">例子</a>先制作合并的效果 </li>
+            <li>根据例子的数据编写最终效果的数据
+                <pre>
+              var mydata=[
                 {
-                    positiontype:'本地卡',cardType:'用户',rowy:'基准价',price1:'1',price2:'2',price3:'3',total:'合计'
+                    positiontype:'类型1',cardType:'用户',rowy:'基准价',price1:'1',price2:'2',price3:'3',total:'合计'
                 },
                 {
-                    positiontype:'本地卡',cardType:'用户',rowy:'单价',price1:'1',price2:'2',price3:'3',total:'合计'
+                    positiontype:'类型1',cardType:'用户',rowy:'单价',price1:'1',price2:'2',price3:'3',total:'合计'
                 },
                 {
-                    positiontype:'本地卡',cardType:'用户',rowy:'笔数',price1:'0',price2:'0',price3:'0',total:'0'
+                    positiontype:'类型1',cardType:'用户',rowy:'笔数',price1:'0',price2:'0',price3:'0',total:'0'
                 },
                 {
-                    positiontype:'本地卡',cardType:'用户',rowy:'金额',price1:'0',price2:'0',price3:'0',total:'0'
-                },
-                {
-                    positiontype:'本地卡',cardType:'普通卡(50%)',rowy:'基准价',price1:'1',price2:'2',price3:'3',total:'合计'
-                },
-                {
-                    positiontype:'本地卡',cardType:'普通卡(50%)',rowy:'单价',price1:'1',price2:'2',price3:'3',total:'合计'
-                },
-                {
-                    positiontype:'本地卡',cardType:'普通卡(50%)',rowy:'笔数',price1:'1',price2:'2',price3:'3',total:'0'
-                }
-                ,
-                {
-                    positiontype:'本地卡',cardType:'普通卡(50%)',rowy:'金额',price1:'1',price2:'2',price3:'3',total:'0'
-                },
-                {
-                    positiontype:'异地卡',cardType:'',rowy:'基准价',price1:'1',price2:'2',price3:'3',total:'合计'
-                },
-                {
-                    positiontype:'异地卡',cardType:'',rowy:'单价',price1:'1',price2:'2',price3:'3',total:'合计'
-                },
-                {
-                    positiontype:'异地卡',cardType:'',rowy:'笔数',price1:'1',price2:'2',price3:'3',total:'0'
-                },
-                {
-                    positiontype:'异地卡',cardType:'',rowy:'金额',price1:'1',price2:'2',price3:'3',total:'0'
-                },
-                {
-                    positiontype:'合计',cardType:'',rowy:'笔数',price1:'1',price2:'2',price3:'3',total:'合计'
-                },
-                {
-                    positiontype:'合计',cardType:'',rowy:'金额',price1:'1',price2:'2',price3:'3',total:'合计'
-                }
+                    positiontype:'类型1',cardType:'用户',rowy:'金额',price1:'0',price2:'0',price3:'0',total:'0'
+                }...
+              ]
+                </pre>
+            </li>
+            <li>根据编写好的数据整合服务器取来的数据</li>
+            <li>
+                编写colModel要求的每列的参数；
 
-            ];
-        var tabledata=org.obj[0].cardList;
-        var cardtypes=cardtype.obj;
-        var basciprice=price.obj;
-        var tablearr=[];
-        var rowys=['基准价','单价','笔数','金额'];
-        var str='{';
-        var str2='{';
-        var str3='{';
-        $.each(basciprice,function (p,pricelist) {
+            </li>
+        </ol>
+    </div>
+    <h4>步骤3.数据整理思路</h4>
+    <div class="bs-callout bs-callout-text">
 
-            str+='"price'+(p+1)+'":'+pricelist.price/100+',';
-            str2+='"price'+(p+1)+'":"0",';
-        })
-        str=str.slice(0,-1);
-        str2=str2.slice(0,-1);
-        str+='}';
-        str2+='}';
-       var priceobj=JSON.parse(str);
+        <ul>
+            <li>
+                1.观察需要的报表结构，类型1-卡类型-['基准价','单价','笔数','金额']-基准价-总计
+                <br>
+                2.形成基准价的数据格式；
+                <pre>
+var str={};//基准价
+var str2={};//单价
 
-       var priceobj2=JSON.parse(str2);//{price1:0,price2:0}
-        //根据卡类型生成本地数据
-        $.each(cardtypes,function (i,item) {
-            $.each(rowys,function (y,rowylist) {
-                if(rowylist=='基准价'){
-                    var obj=$.extend({ positiontype:'本地卡',cardytpei:item.iCardType,cardType:item.cCardName,rowy:rowylist,total:'合计'},priceobj);
-                    tablearr.push(obj)
-                }else if(rowylist=='单价'){ //单价打折计算
-                    var priceobjdj=JSON.parse(str);
-                    for(key in priceobjdj){
-                        priceobjdj[key]= priceobjdj[key]*item.iValue/100
-                    }
-                    var obj=$.extend({ positiontype:'本地卡',cardytpei:item.iCardType,cardType:item.cCardName,rowy:rowylist,total:'合计'},priceobjdj);
-                    tablearr.push(obj)
-                }else{
-                    var obj=$.extend({ positiontype:'本地卡',cardytpei:item.iCardType,cardType:item.cCardName,rowy:rowylist,total:'0'},priceobj2);
-                    tablearr.push(obj)
-                }
-            })
+$.each(basciprice,function (p,pricelist) {
+    str['price'+(p+1)]=pricelist.price/100;
+    str2['price'+(p+1)]='0' //暂时先不考虑具体结果，默认显示0；
 
-        });
-        //生成异地卡
+});
+// str={price1: 1, price2: 2, price3: 3, price4: 4}
+
+                </pre>
+                3.形成类型1-卡类型-['基准价','单价','笔数','金额']，=>为对象，合并基准价对象。
+                <br>
+                cardtypes=》卡类型
+                <img src="./images/cardtype.png" alt="">
+                <br>
+                rowys=》['基准价','单价','笔数','金额']
+
+                <pre>
+
+
+
+  因此{
+      循环卡类型{
+          循环['基准价','单价','笔数','金额']
+      }
+  }
+  var priceobj=$.extend({},str);
+  var priceobj2=$.extend({},str2)
+   $.each(cardtypes,function (i,item) {
         $.each(rowys,function (y,rowylist) {
-            if(rowylist=='基准价'||rowylist=='单价'){
-                var obj=$.extend({ positiontype:'异地卡',cardytpei:'other',cardType:'',rowy:rowylist,total:'合计'},priceobj);
+            if(rowylist=='基准价'){
+                var obj=$.extend({ positiontype:'类型1',cardytpei:item.iCardType,cardType:item.cCardName,rowy:rowylist,total:'合计'},priceobj);
+                tablearr.push(obj)
+            }else if(rowylist=='单价'){ //单价打折计算
+
+                for(key in str){
+                    str[key]= str[key]*item.iValue/100
+                }
+                var obj=$.extend({ positiontype:'类型1',cardytpei:item.iCardType,cardType:item.cCardName,rowy:rowylist,total:'合计'},str);
                 tablearr.push(obj)
             }else{
-                var obj=$.extend({ positiontype:'异地卡',cardytpei:'other',cardType:'',rowy:rowylist,total:'0'},priceobj2);
+                var obj=$.extend({ positiontype:'类型1',cardytpei:item.iCardType,cardType:item.cCardName,rowy:rowylist,total:'0'},priceobj2);
                 tablearr.push(obj)
             }
+        })
+
+   });
+</pre>
+            4.按照上述方法形成类型2数据格式和底部的合计
+                <br>
+            5.根据服务器返回的表格数据，形成最终数据形式。
+                <img src="./images/data.png" alt="">
+                <pre>
+  // 加入数据 tablearr=>最终数据 ；tabledata=》接口传来的数据
+          $.each(tablearr,function (t,tablelist) {
+            $.each(tabledata,function (i,item) {
+                if(tablelist.cardytpei==item.cardType){ //匹配卡类型
+                    var totalnum=0;
+                    $.each(item.costList,function (inner,list) {
+                       var str={};
+                       var newobj={};
+                        for(key in tablelist){
+                            var match=key.slice(-1);  //key=>price1;match=>1,2,3,4...匹配单价
+                            if(list.initialCost==match){
+
+                                if(tablelist.rowy=='笔数'){
+                                    totalnum+=list.cardCount;
+                                    str['price'+match]=list.cardCount;
+                                    newobj= $.extend({},str)
+
+                                }
+
+                                if(tablelist.rowy=='金额'){
+                                    totalnum+=list.costCount;
+                                    str['price'+match]=list.costCount;
+                                    newobj= $.extend({},str)
+                                }
+
+                                 $.extend(tablelist,newobj);
+
+                            }
+
+
+                        }
+                    })
+                }
+
+
+            })
         });
-        //生成底部合计
-        $.each(rowys,function (y,rowylist) {
-            if(rowylist!='基准价'&&rowylist!='单价'){
-                var obj=$.extend({ positiontype:'合计',cardytpei:'total',cardType:'',rowy:rowylist,total:'0'},priceobj2);
-                tablearr.push(obj)
-            }
-        });
-        //@colModelmap 表格内容格式化，不含活动的x轴单元格；
+                </pre>
+            </li>
+
+        </ul>
+    </div>
+    <h4>步骤4.编写colModel要求的参数</h4>
+    <div class="bs-callout bs-callout-success">
+        <img src="./images/can2.png" alt="">
+         <pre>
+             //不包含基准价各列；
         var colModelmap=[
             {name:"positiontype",sortable:false,cellattr: function(rowId, tv, rawObject, cm, rdata) {
-                console.log(rowId, tv, rawObject, cm, rdata)
                 //合并单元格
-                if (tv== '异地卡') {
+                if (tv== '类型2'||tv== '合计') {
                     return ' colspan=2  rowspan=4'
-                }else if(tv== '合计'){
-                    return ' colspan=2  rowspan=4'
+
                 }else {
                     return 'id=\'positiontype' + rowId + "\'";
                 }
@@ -175,9 +204,10 @@
                 }
             },
         ];
-        var ytotal=[];//y轴笔数合计
-        var ytotal2=[];//y轴金额合计
-        //根据基准价，增加x轴单元格
+         //加入基准价各列
+        var ytotal=[];//底层合计求和用：笔数
+        var ytotal2=[];//底层合计求和用：金额
+        //增加基准价的每列
         $.each(basciprice,function (i,item) {
             var newobj={name:'price'+(i+1),sortable:false,formatter:formatterval,cellattr:function (a,b,c) {
                 if(c.rowy!='基准价'&&c.rowy!='单价'){
@@ -188,32 +218,245 @@
             ytotal2.push(0);
             colModelmap.splice(colModelmap.length-1,0,newobj)
         });
+         </pre>
+
+
+    </div>
+    <h5>底层合计求和</h5>
+    <div class="bs-callout bs-callout-text">
+    <pre>
+  function formatterval(a,b,c) {
+                var index=b.colModel.name.slice(-1)-1;//b.colModel.name=price1,price2...,index =>数组的序号
+                console.log('a:',a,'b:',b,'c:',c)
+                if(c.rowy=='笔数'){
+                    ytotal[index]+=Number(a);
+                    if(c.positiontype=='合计'){
+                        return a= ytotal[index]
+                    }else{
+                        return a
+                    }
+
+                }
+                else if(c.rowy=='金额') {
+                    ytotal2[index] += Number(a);
+                    if (c.positiontype == '合计') {
+                        return a = ytotal2[index]
+                    }else{
+                        return a
+                    }
+
+                }
+                else{
+                    return a
+                }
+            return a
+
+        }
+    </pre>
+    </div>
+   <h5>横向求和</h5>
+    <div class="bs-callout-success bs-callout">
+        <pre>
+        gridComplete: function(a,b,c) {
+            //x轴求和
+                $("tr").each(function () {
+                    var val=0;
+                    $(this).find('td.tdval').each(function () {
+                        val+=parseFloat($(this).html());
+                        $(this).siblings(".totalnum").html(val)
+                    });
+                });
+            }
+        </pre>
+    </div>
+    <table id="list">
+    </table>
+    <div id="pager">
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+            //最终需要的数据格式，做参考用
+        var mydata=[
+                {
+                    positiontype:'类型1',cardType:'用户',rowy:'基准价',price1:'1',price2:'2',price3:'3',total:'合计'
+                },
+                {
+                    positiontype:'类型1',cardType:'用户',rowy:'单价',price1:'1',price2:'2',price3:'3',total:'合计'
+                },
+                {
+                    positiontype:'类型1',cardType:'用户',rowy:'笔数',price1:'0',price2:'0',price3:'0',total:'0'
+                },
+                {
+                    positiontype:'类型1',cardType:'用户',rowy:'金额',price1:'0',price2:'0',price3:'0',total:'0'
+                },
+                {
+                    positiontype:'类型1',cardType:'普通卡(50%)',rowy:'基准价',price1:'1',price2:'2',price3:'3',total:'合计'
+                },
+                {
+                    positiontype:'类型1',cardType:'普通卡(50%)',rowy:'单价',price1:'1',price2:'2',price3:'3',total:'合计'
+                },
+                {
+                    positiontype:'类型1',cardType:'普通卡(50%)',rowy:'笔数',price1:'1',price2:'2',price3:'3',total:'0'
+                }
+                ,
+                {
+                    positiontype:'类型1',cardType:'普通卡(50%)',rowy:'金额',price1:'1',price2:'2',price3:'3',total:'0'
+                },
+                {
+                    positiontype:'类型2',cardType:'',rowy:'基准价',price1:'1',price2:'2',price3:'3',total:'合计'
+                },
+                {
+                    positiontype:'类型2',cardType:'',rowy:'单价',price1:'1',price2:'2',price3:'3',total:'合计'
+                },
+                {
+                    positiontype:'类型2',cardType:'',rowy:'笔数',price1:'1',price2:'2',price3:'3',total:'0'
+                },
+                {
+                    positiontype:'类型2',cardType:'',rowy:'金额',price1:'1',price2:'2',price3:'3',total:'0'
+                },
+                {
+                    positiontype:'合计',cardType:'',rowy:'笔数',price1:'1',price2:'2',price3:'3',total:'合计'
+                },
+                {
+                    positiontype:'合计',cardType:'',rowy:'金额',price1:'1',price2:'2',price3:'3',total:'合计'
+                }
+
+            ];
+        var tabledata=org.obj[0].cardList;
+        var cardtypes=cardtype.obj;
+        var basciprice=price.obj;
+        var tablearr=[];
+        var rowys=['基准价','单价','笔数','金额'];
+        var str={};
+        var str2={};
+        $.each(basciprice,function (p,pricelist) {
+            str['price'+(p+1)]=pricelist.price/100;
+            str2['price'+(p+1)]='0'
+
+        });
+       var priceobj=$.extend({},str);
+       var priceobj2=$.extend({},str2)//{price1:0,price2:0}
+        //根据卡类型生成本地数据
+        $.each(cardtypes,function (i,item) {
+            $.each(rowys,function (y,rowylist) {
+                if(rowylist=='基准价'){
+                    var obj=$.extend({ positiontype:'类型1',cardytpei:item.iCardType,cardType:item.cCardName,rowy:rowylist,total:'合计'},priceobj);
+                    tablearr.push(obj)
+                }else if(rowylist=='单价'){ //单价打折计算
+
+                    for(key in str){
+                        str[key]= str[key]*item.iValue/100
+                    }
+                    var obj=$.extend({ positiontype:'类型1',cardytpei:item.iCardType,cardType:item.cCardName,rowy:rowylist,total:'合计'},str);
+                    tablearr.push(obj)
+                }else{
+                    var obj=$.extend({ positiontype:'类型1',cardytpei:item.iCardType,cardType:item.cCardName,rowy:rowylist,total:'0'},priceobj2);
+                    tablearr.push(obj)
+                }
+            })
+
+        });
+
+        //生成类型2
+        $.each(rowys,function (y,rowylist) {
+            if(rowylist=='基准价'||rowylist=='单价'){
+                var obj=$.extend({ positiontype:'类型2',cardytpei:'other',cardType:'',rowy:rowylist,total:'合计'},priceobj);
+                tablearr.push(obj)
+            }else{
+                var obj=$.extend({ positiontype:'类型2',cardytpei:'other',cardType:'',rowy:rowylist,total:'0'},priceobj2);
+                tablearr.push(obj)
+            }
+        });
+        //生成底部合计
+        $.each(rowys,function (y,rowylist) {
+            if(rowylist!='基准价'&&rowylist!='单价'){
+                var obj=$.extend({ positiontype:'合计',cardytpei:'total',cardType:'',rowy:rowylist,total:'0'},priceobj2);
+                tablearr.push(obj)
+            }
+        });
+        console.log('不包括值的数据格式',tablearr)
+        //===============================@colModelmap 表格内容格式化，不含活动的x轴单元格===============================
+        var colModelmap=[
+            {name:"positiontype",sortable:false,cellattr: function(rowId, tv, rawObject, cm, rdata) {
+                //合并单元格
+                if (tv== '类型2'||tv== '合计') {
+                    return ' colspan=2  rowspan=4'
+
+                }else {
+                    return 'id=\'positiontype' + rowId + "\'";
+                }
+            }},
+            {name:"cardType",sortable:false,cellattr: function(rowId, tv, rawObject, cm, rdata) {
+                //合并单元格
+                if (rawObject.cardType== '') {
+                    return ' style="display:none" '
+                }
+                else{
+                    return 'id=\'cardType' + rowId + "\'";
+                }
+
+
+            }},
+            {name:"rowy",sortable:false},
+            {name:"total",sortable:false,
+                cellattr: function(rowId, tv, rawObject, cm, rdata) {
+                    //合并单元格
+                    return 'id=\'total' + rowId +"\'"+ 'class="totalnum"';
+
+                },
+                formatter:function(a,b,c){
+                    if(c.rowy=='金额'){
+
+                        return '<span>'+a+'</span>'
+                    }else{
+                        return a
+                    }
+                }
+            },
+        ];
+        console.log('最初的各列参数',colModelmap)
+
+        var ytotal=[];//y轴笔数合计
+        var ytotal2=[];//y轴金额合计
+        //增加基准价的每列
+        $.each(basciprice,function (i,item) {
+            var newobj={name:'price'+(i+1),sortable:false,formatter:formatterval,cellattr:function (a,b,c) {
+                if(c.rowy!='基准价'&&c.rowy!='单价'){
+                    return 'class="tdval"'
+                }
+            }};
+            ytotal.push(0);
+            ytotal2.push(0);
+            colModelmap.splice(colModelmap.length-1,0,newobj)
+        });
+
+        console.log('最终的各列参数',colModelmap)
         // 加入数据 tablearr=>最终数据 ；tabledata=》接口传来的数据
         $.each(tablearr,function (t,tablelist) {
             $.each(tabledata,function (i,item) {
                 if(tablelist.cardytpei==item.cardType){ //匹配卡类型
                     var totalnum=0;
                     $.each(item.costList,function (inner,list) {
-                       var reports= list;
-                        var str='{';
-                        var newobj={};
+                       var str={};
+                       var newobj={};
                         for(key in tablelist){
-                            var match=key.slice(-1);   //匹配单价
-
+                            var match=key.slice(-1);  //key=>price1;match=>1,2,3,4...匹配单价
                             if(list.initialCost==match){
 
                                 if(tablelist.rowy=='笔数'){
                                     totalnum+=list.cardCount;
-                                    str+='"price'+match+'":"'+list.cardCount+'"}';
-
-                                    newobj= $.extend({},JSON.parse(str))
+                                    str['price'+match]=list.cardCount;
+                                    newobj= $.extend({},str)
 
                                 }
 
                                 if(tablelist.rowy=='金额'){
                                     totalnum+=list.costCount;
-                                    str+='"price'+match+'":"'+list.costCount+'"}';
-                                    newobj= $.extend({},JSON.parse(str))
+                                    str['price'+match]=list.costCount;
+                                    newobj= $.extend({},str)
                                 }
 
                                  $.extend(tablelist,newobj);
@@ -230,20 +473,25 @@
         });
         //y轴求和方法；
         function formatterval(a,b,c) {
-                var index=b.colModel.name.slice(-1)-1;
+                var index=b.colModel.name.slice(-1)-1;//b.colModel.name=price1,price2...,index =>数组的序号
+                console.log('a:',a,'b:',b,'c:',c)
                 if(c.rowy=='笔数'){
                     ytotal[index]+=Number(a);
                     if(c.positiontype=='合计'){
                         return a= ytotal[index]
+                    }else{
+                        return a
                     }
-                    return a
+
                 }
                 else if(c.rowy=='金额') {
                     ytotal2[index] += Number(a);
                     if (c.positiontype == '合计') {
                         return a = ytotal2[index]
+                    }else{
+                        return a
                     }
-                    return a
+
                 }
                 else{
                     return a
@@ -252,8 +500,6 @@
 
         }
         grid = $("#list");
-        console.log(tablearr)
-        console.log(colModelmap)
         grid.jqGrid({
             datatype: 'local',
             data: tablearr,
@@ -268,10 +514,9 @@
 //            sortname: 'invdate',
             viewrecords: true,
 //            sortorder: 'desc',
-            caption: '柳河机构汇总表',
+            caption: '报表',
             height: '100%',
             gridComplete: function(a,b,c) {
-
                 //②在gridComplete调用合并方法
                 var gridName = "list";
                 Merger(gridName, 'positiontype');
@@ -296,7 +541,7 @@
                 $(".ui-jqgrid-labels.jqg-second-row-header").before("<tr><td colspan='3'>清算日期开始</td><td></td><td>清算日期结束</td><td></td></tr>")
             },
             loadComplete:function (data) {
-                console.log(data)
+
             }
         });
         //公共调用方法（合并单元格）

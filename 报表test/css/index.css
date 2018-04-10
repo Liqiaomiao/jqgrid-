@@ -8,4 +8,6 @@
 }
 .bs-callout-danger{border-left-color:indianred}
 .bs-callout-success{border-left-color:darkseagreen}
+.bs-callout-text{border-left-color:#70a8d2}
 .mt20{margin-top: 20px;}
+.ui-jqgrid .ui-jqgrid-btable{table-layout: auto}
